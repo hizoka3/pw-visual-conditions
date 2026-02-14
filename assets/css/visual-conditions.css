@@ -13,14 +13,9 @@
 }
 
 .pw-vc-row select,
-.pw-vc-row input[type="text"] {
+.pw-vc-row .select2-container {
 	min-width: 160px;
 	max-width: 240px;
-}
-
-.pw-vc-items {
-	min-height: 36px;
-	max-height: 120px;
 }
 
 .pw-vc-remove {

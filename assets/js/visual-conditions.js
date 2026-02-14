@@ -47,6 +47,23 @@
 
 			if (condition.source) {
 				$row.find(".pw-vc-source").val(condition.source).trigger("change");
+
+				// Pre-populate Select2 with saved item after Select2 is initialized
+				if (condition.items?.length) {
+					const savedId = condition.items[0];
+					const sourceConfig = this.findSourceConfig(condition.source);
+					if (sourceConfig?.source) {
+						this.fetchItems(sourceConfig.source, "").then((results) => {
+							const found = results.find(
+								(r) => String(r.id) === String(savedId),
+							);
+							if (!found) return;
+							const $items = $row.find(".pw-vc-items");
+							const option = new Option(found.label, found.id, true, true);
+							$items.append(option).trigger("change");
+						});
+					}
+				}
 			}
 		}
 
@@ -68,10 +85,8 @@
                         <option value="">— Select —</option>
                     </select>
 
-                    <select class="pw-vc-items" multiple style="display:none;">
+                    <select class="pw-vc-items" style="display:none;">
                     </select>
-
-                    <input type="text" class="pw-vc-search" placeholder="Search..." style="display:none;">
 
                     <button type="button" class="pw-vc-remove">✕</button>
                 </div>
@@ -94,25 +109,39 @@
 
 		async populateItems($row, sourceKey) {
 			const $items = $row.find(".pw-vc-items");
-			const $search = $row.find(".pw-vc-search");
-
-			// Find source config
 			const sourceConfig = this.findSourceConfig(sourceKey);
+
+			// Destroy previous Select2 instance if exists
+			if ($items.data("select2")) {
+				$items.select2("destroy");
+			}
 
 			if (!sourceConfig || !sourceConfig.searchable) {
 				$items.hide().empty();
-				$search.hide();
 				return;
 			}
 
-			$search.show();
-			$items.show().empty().append("<option>Loading...</option>");
+			$items.show().empty();
 
-			const results = await this.fetchItems(sourceConfig.source, $search.val());
-
-			$items.empty();
-			results.forEach((item) => {
-				$items.append(`<option value="${item.id}">${item.label}</option>`);
+			$items.select2({
+				placeholder: "Search...",
+				allowClear: true,
+				minimumInputLength: 0,
+				ajax: {
+					transport: (params, success, failure) => {
+						this.fetchItems(sourceConfig.source, params.data.term || "")
+							.then((results) =>
+								success({
+									results: results.map((item) => ({
+										id: item.id,
+										text: item.label,
+									})),
+								}),
+							)
+							.catch(failure);
+					},
+					delay: 300,
+				},
 			});
 		}
 
@@ -133,35 +162,19 @@
 				this.syncInput();
 			});
 
-			// Search items
-			this.$rows.on(
-				"input",
-				".pw-vc-search",
-				this.debounce(async (e) => {
-					const $row = $(e.target).closest(".pw-vc-row");
-					const sourceKey = $row.find(".pw-vc-source").val();
-					const sourceConf = this.findSourceConfig(sourceKey);
-					if (!sourceConf) return;
-
-					const results = await this.fetchItems(
-						sourceConf.source,
-						e.target.value,
-					);
-					const $items = $row.find(".pw-vc-items").empty();
-					results.forEach((item) => {
-						$items.append(`<option value="${item.id}">${item.label}</option>`);
-					});
-				}, 300),
-			);
-
 			// Remove row
 			this.$rows.on("click", ".pw-vc-remove", (e) => {
-				$(e.target).closest(".pw-vc-row").remove();
+				const $row = $(e.target).closest(".pw-vc-row");
+				const $items = $row.find(".pw-vc-items");
+				if ($items.data("select2")) {
+					$items.select2("destroy");
+				}
+				$row.remove();
 				this.syncInput();
 			});
 
 			// Any change → sync hidden input
-			this.$rows.on("change", "select, input", () => this.syncInput());
+			this.$rows.on("change", "select", () => this.syncInput());
 		}
 
 		// -----------------------------------------------------------------------
@@ -176,7 +189,12 @@
 				const source = $row.find(".pw-vc-source").val();
 				if (!source) return;
 
-				const selectedItems = $row.find(".pw-vc-items").val() || [];
+				const rawValue = $row.find(".pw-vc-items").val();
+				const selectedItems = rawValue
+					? Array.isArray(rawValue)
+						? rawValue
+						: [rawValue]
+					: [];
 
 				conditions.push({
 					operator: $row.find(".pw-vc-operator").val(),
@@ -220,14 +238,6 @@
 				if (found) return found;
 			}
 			return null;
-		}
-
-		debounce(fn, delay) {
-			let timer;
-			return (...args) => {
-				clearTimeout(timer);
-				timer = setTimeout(() => fn.apply(this, args), delay);
-			};
 		}
 	}
 
