@@ -1,0 +1,41 @@
+/* assets/css/visual-conditions.css */
+
+.pw-vc-wrapper {
+	margin: 1rem 0;
+}
+
+.pw-vc-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+	flex-wrap: wrap;
+}
+
+.pw-vc-row select,
+.pw-vc-row input[type="text"] {
+	min-width: 160px;
+	max-width: 240px;
+}
+
+.pw-vc-items {
+	min-height: 36px;
+	max-height: 120px;
+}
+
+.pw-vc-remove {
+	background: none;
+	border: none;
+	color: #cc1818;
+	cursor: pointer;
+	font-size: 16px;
+	padding: 0 4px;
+}
+
+.pw-vc-remove:hover {
+	color: #a00;
+}
+
+.pw-vc-add-condition {
+	margin-top: 4px;
+}

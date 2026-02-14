@@ -1,0 +1,15 @@
+{
+	"name": "pw/visual-conditions",
+	"description": "WordPress post/page/post-type condition selector with include/exclude logic",
+	"type": "library",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=8.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"PW\\VisualConditions\\": "src/"
+		}
+	},
+	"minimum-stability": "stable"
+}
