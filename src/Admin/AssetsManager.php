@@ -16,7 +16,10 @@ class AssetsManager
 	{
 		// Only enqueue on the screens defined by the plugin consuming this package
 		$screens = $this->config["screens"] ?? [];
-		if (!empty($screens) && !$this->is_allowed_screen($screens)) {
+		if (empty($screens)) {
+			return;
+		}
+		if (!$this->is_allowed_screen($screens)) {
 			return;
 		}
 

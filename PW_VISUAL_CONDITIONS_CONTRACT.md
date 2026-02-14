@@ -50,7 +50,7 @@ Es un singleton. Llamadas posteriores a `init()` retornan la misma instancia.
 [
     'assets_url' => plugin_dir_url(__FILE__) . 'vendor/pw/visual-conditions/assets/', // requerido
     'version'    => '1.0.0',       // opcional, default: '1.0.0'
-    'screens'    => ['toplevel_page_mi-plugin'], // opcional, restringe en qué pantallas admin se cargan los assets
+    'screens'    => ['proyecto', 'page'], // requerido en la práctica — usa screen->id de WP (= post_type name en edit screens). Si se omite o vacío, los assets NO se cargan en ninguna pantalla.
 ]
 ```
 
@@ -113,7 +113,7 @@ use PW\VisualConditions\VisualConditions;
 add_action( 'plugins_loaded', function() {
     VisualConditions::init([
         'assets_url' => plugin_dir_url(__FILE__) . 'vendor/pw/visual-conditions/assets/',
-        'screens'    => [ 'toplevel_page_mi-plugin' ],
+        'screens'    => [ 'proyecto', 'page' ], // screen->id requerido
     ]);
 });
 

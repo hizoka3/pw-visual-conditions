@@ -1,0 +1,30 @@
+# Dependencies
+/vendor/
+/node_modules/
+/flattened/
+
+# Build outputs
+/releases/
+
+# Compiled assets
+
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temp files
+*.tmp
+*.temp
+test_verify_*
+temp_build_*
