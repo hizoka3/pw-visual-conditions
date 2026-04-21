@@ -156,10 +156,10 @@
 
 /* Dropdown (suele renderizarse en body; clase vía dropdownCssClass) */
 .select2-dropdown.pw-vc-select2-dd {
-	background: var(--pw-color-bg-default);
+	background: var(--pw-color-bg-default, #2a2a2a);
 	border: 1px solid var(--pw-color-border-emphasis);
 	border-radius: 0;
-	color: var(--pw-color-fg-default);
+	color: var(--pw-color-fg-default, #f0f0f0);
 	box-shadow: var(--pw-shadow-sm, 0 4px 12px rgba(0, 0, 0, 0.25));
 	z-index: 1000000 !important;
 }
@@ -193,19 +193,30 @@
 	font-size: 12px;
 }
 
-.select2-dropdown.pw-vc-select2-dd .select2-results__option {
-	color: var(--pw-color-fg-default);
+/*
+ * Select2 core fuerza color oscuro en opciones; el dropdown suele estar en body,
+ * donde los tokens DS a veces no aplican — forzar texto claro legible en tema oscuro.
+ */
+.select2-dropdown.pw-vc-select2-dd .select2-results__option,
+.select2-dropdown.pw-vc-select2-dd .select2-results__option--selectable {
+	color: var(--pw-color-fg-default, #f0f0f0) !important;
 }
 
 .select2-dropdown.pw-vc-select2-dd .select2-results__option--selectable:hover,
-.select2-dropdown.pw-vc-select2-dd .select2-results__option--highlighted {
-	background: var(--pw-color-bg-overlay) !important;
-	color: var(--pw-color-fg-default) !important;
+.select2-dropdown.pw-vc-select2-dd .select2-results__option--highlighted,
+.select2-dropdown.pw-vc-select2-dd
+	.select2-results__option--highlighted.select2-results__option--selectable {
+	background: var(--pw-color-bg-overlay, rgba(255, 255, 255, 0.08)) !important;
+	color: var(--pw-color-fg-default, #ffffff) !important;
 }
 
 .select2-dropdown.pw-vc-select2-dd .select2-results__option[aria-selected="true"] {
-	background: var(--pw-color-accent-subtle);
-	color: var(--pw-color-fg-default);
+	background: var(--pw-color-accent-subtle, rgba(255, 255, 255, 0.12)) !important;
+	color: var(--pw-color-fg-default, #ffffff) !important;
+}
+
+.select2-dropdown.pw-vc-select2-dd .select2-results__option[aria-disabled="true"] {
+	color: var(--pw-color-fg-muted, #a0a0a0) !important;
 }
 
 /* Botón + Add condition (secundario, sin .button de WP) */
