@@ -70,6 +70,24 @@ Es un singleton. Llamadas posteriores a `init()` retornan la misma instancia.
 | `pw_vc/items` | filter | `array $items, string $source, string $search` | Permite modificar los items del tercer dropdown |
 | `pw_vc/evaluate_condition` | filter | `bool $match, string $source, array $items` | Permite implementar la lógica de evaluación por contexto |
 
+### Estructura del JSON guardado
+
+El input hidden entrega un array de condiciones. Cada condición tiene esta forma:
+
+```json
+[
+    {
+        "operator": "include",
+        "source": "post__specific",
+        "items": ["42"]
+    }
+]
+```
+
+- `operator`: `"include"` o `"exclude"`
+- `source`: key de la fuente seleccionada (ej: `post__all`, `post__specific`, `post__tax_category`)
+- `items`: **siempre un array**, aunque la selección sea única. Contiene el ID del post o term seleccionado como string. Si la fuente no es searchable (ej: `post__all`), `items` es `[]`.
+
 ---
 
 ## Lo que el package necesita del plugin
@@ -101,6 +119,7 @@ add_filter( 'pw_vc/evaluate_condition', function( $match, $source, $items ) {
 - Versión mínima de PHP: `8.0`
 - Versión mínima de WordPress: `6.0`
 - Depende de jQuery (ya incluido en el admin de WordPress).
+- Depende de **Select2 4.1.0-rc.0**, cargado automáticamente desde CDN (`cdn.jsdelivr.net`). El admin donde se use el package requiere acceso a internet.
 
 ---
 
